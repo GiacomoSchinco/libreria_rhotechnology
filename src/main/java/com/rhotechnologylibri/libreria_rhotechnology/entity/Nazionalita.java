@@ -1,16 +1,14 @@
 package com.rhotechnologylibri.libreria_rhotechnology.entity;
 
 import jakarta.persistence.*;
-import java.util.UUID;
 
 @Entity
-@Table(name = "Nazionalita")
+@Table(name = "nazionalita")
 public class Nazionalita {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_nazionalita", columnDefinition = "binary(16)", updatable = false, nullable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(nullable = false, length = 100, unique = true)
     private String nome;
@@ -22,11 +20,11 @@ public class Nazionalita {
         this.nome = nome;
     }
 
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

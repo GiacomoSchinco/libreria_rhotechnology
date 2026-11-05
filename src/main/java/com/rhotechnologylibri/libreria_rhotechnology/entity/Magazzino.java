@@ -1,16 +1,14 @@
 package com.rhotechnologylibri.libreria_rhotechnology.entity;
 
 import jakarta.persistence.*;
-import java.util.UUID;
 
 @Entity
-@Table(name = "Magazzino")
+@Table(name = "magazzino")
 public class Magazzino {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_copia", columnDefinition = "binary(16)", updatable = false, nullable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_libro", nullable = false)
@@ -26,11 +24,11 @@ public class Magazzino {
     public Magazzino() {
     }
 
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

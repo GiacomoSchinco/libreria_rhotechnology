@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/generi")
@@ -22,4 +25,10 @@ public class GenereController {
     public List<Genere> getAll() {
         return genereService.getAll();
     }
+
+    @GetMapping("/by-id")
+    public Genere getById(@RequestParam("id") Integer id) {
+        return genereService.getById(id);
+    }
+
 }

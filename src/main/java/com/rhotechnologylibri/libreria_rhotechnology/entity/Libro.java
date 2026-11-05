@@ -2,17 +2,16 @@ package com.rhotechnologylibri.libreria_rhotechnology.entity;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Libri")
+@Table(name = "libri")
 public class Libro {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_libro", columnDefinition = "binary(16)", updatable = false, nullable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(nullable = false, length = 255)
     private String titolo;
@@ -25,7 +24,7 @@ public class Libro {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "Libri_Autori",
+            name = "libri_autori",
             joinColumns = @JoinColumn(name = "id_libro"),
             inverseJoinColumns = @JoinColumn(name = "id_autore")
     )
@@ -34,11 +33,11 @@ public class Libro {
     public Libro() {
     }
 
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

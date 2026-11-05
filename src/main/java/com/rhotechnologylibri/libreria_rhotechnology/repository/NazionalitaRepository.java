@@ -3,8 +3,6 @@ package com.rhotechnologylibri.libreria_rhotechnology.repository;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.Nazionalita;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.UUID;
-
-public interface NazionalitaRepository extends JpaRepository<Nazionalita, UUID> {
+public interface NazionalitaRepository extends JpaRepository<Nazionalita, Integer> {
 
 }

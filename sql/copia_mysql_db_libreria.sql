@@ -1,86 +1,85 @@
--- libreria_db.Case_Editrici definition
+-- NOTA: tabelle in minuscolo, chiavi primarie INT AUTO_INCREMENT.
+-- Le chiavi esterne vanno create dopo le tabelle referenziate (ordine sotto rispettato).
 
--- NOTA: gli UUID sono salvati in layout standard (uuid_to_bin(uuid(),0)),
--- lo stesso usato da Hibernate. Non usare il flag 1 (swap): mescolare i due
--- formati produce byte diversi per lo stesso UUID.
+-- libreria_db.case_editrici definition
 
-CREATE TABLE `Case_Editrici` (
-  `id_casa_editrice` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
+CREATE TABLE `case_editrici` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(150) NOT NULL,
-  PRIMARY KEY (`id_casa_editrice`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- libreria_db.Generi definition
+-- libreria_db.generi definition
 
-CREATE TABLE `Generi` (
-  `id_genere` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
+CREATE TABLE `generi` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
-  PRIMARY KEY (`id_genere`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- libreria_db.Nazionalita definition
+-- libreria_db.nazionalita definition
 
-CREATE TABLE `Nazionalita` (
-  `id_nazionalita` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
+CREATE TABLE `nazionalita` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
-  PRIMARY KEY (`id_nazionalita`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- libreria_db.Autori definition
+-- libreria_db.autori definition
 
-CREATE TABLE `Autori` (
-  `id_autore` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
+CREATE TABLE `autori` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   `cognome` varchar(100) NOT NULL,
   `data_nascita` date DEFAULT NULL,
-  `id_nazionalita` binary(16) DEFAULT NULL,
-  PRIMARY KEY (`id_autore`),
+  `id_nazionalita` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY `idx_autori_nazionalita` (`id_nazionalita`),
-  CONSTRAINT `Autori_ibfk_1` FOREIGN KEY (`id_nazionalita`) REFERENCES `Nazionalita` (`id_nazionalita`) ON DELETE SET NULL
+  CONSTRAINT `fk_autori_nazionalita` FOREIGN KEY (`id_nazionalita`) REFERENCES `nazionalita` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- libreria_db.Libri definition
+-- libreria_db.libri definition
 
-CREATE TABLE `Libri` (
-  `id_libro` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
+CREATE TABLE `libri` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `titolo` varchar(255) NOT NULL,
   `anno` int DEFAULT NULL,
-  `id_genere` binary(16) DEFAULT NULL,
-  PRIMARY KEY (`id_libro`),
+  `id_genere` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
   KEY `idx_libri_genere` (`id_genere`),
-  CONSTRAINT `Libri_ibfk_1` FOREIGN KEY (`id_genere`) REFERENCES `Generi` (`id_genere`) ON DELETE SET NULL
+  CONSTRAINT `fk_libri_genere` FOREIGN KEY (`id_genere`) REFERENCES `generi` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- libreria_db.Libri_Autori definition
+-- libreria_db.libri_autori definition
 
-CREATE TABLE `Libri_Autori` (
-  `id_libro` binary(16) NOT NULL,
-  `id_autore` binary(16) NOT NULL,
+CREATE TABLE `libri_autori` (
+  `id_libro` int NOT NULL,
+  `id_autore` int NOT NULL,
   PRIMARY KEY (`id_libro`,`id_autore`),
-  KEY `id_autore` (`id_autore`),
-  CONSTRAINT `Libri_Autori_ibfk_1` FOREIGN KEY (`id_libro`) REFERENCES `Libri` (`id_libro`) ON DELETE CASCADE,
-  CONSTRAINT `Libri_Autori_ibfk_2` FOREIGN KEY (`id_autore`) REFERENCES `Autori` (`id_autore`) ON DELETE CASCADE
+  KEY `idx_libri_autori_autore` (`id_autore`),
+  CONSTRAINT `fk_libri_autori_libro` FOREIGN KEY (`id_libro`) REFERENCES `libri` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_libri_autori_autore` FOREIGN KEY (`id_autore`) REFERENCES `autori` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- libreria_db.Magazzino definition
+-- libreria_db.magazzino definition
 
-CREATE TABLE `Magazzino` (
-  `id_copia` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
-  `id_libro` binary(16) NOT NULL,
+CREATE TABLE `magazzino` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_libro` int NOT NULL,
   `quantita` int NOT NULL DEFAULT '1',
-  `id_casa_editrice` binary(16) DEFAULT NULL,
-  PRIMARY KEY (`id_copia`),
-  KEY `idx_copie_libro` (`id_libro`),
-  KEY `idx_copie_casa_editrice` (`id_casa_editrice`),
-  CONSTRAINT `Magazzino_ibfk_1` FOREIGN KEY (`id_libro`) REFERENCES `Libri` (`id_libro`) ON DELETE CASCADE,
-  CONSTRAINT `Magazzino_ibfk_2` FOREIGN KEY (`id_casa_editrice`) REFERENCES `Case_Editrici` (`id_casa_editrice`) ON DELETE SET NULL
+  `id_casa_editrice` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_magazzino_libro` (`id_libro`),
+  KEY `idx_magazzino_casa_editrice` (`id_casa_editrice`),
+  CONSTRAINT `fk_magazzino_libro` FOREIGN KEY (`id_libro`) REFERENCES `libri` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_magazzino_casa_editrice` FOREIGN KEY (`id_casa_editrice`) REFERENCES `case_editrici` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
