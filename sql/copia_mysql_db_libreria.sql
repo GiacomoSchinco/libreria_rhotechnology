@@ -1,7 +1,11 @@
 -- libreria_db.Case_Editrici definition
 
+-- NOTA: gli UUID sono salvati in layout standard (uuid_to_bin(uuid(),0)),
+-- lo stesso usato da Hibernate. Non usare il flag 1 (swap): mescolare i due
+-- formati produce byte diversi per lo stesso UUID.
+
 CREATE TABLE `Case_Editrici` (
-  `id_casa_editrice` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),1)),
+  `id_casa_editrice` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
   `nome` varchar(150) NOT NULL,
   PRIMARY KEY (`id_casa_editrice`),
   UNIQUE KEY `nome` (`nome`)
@@ -11,7 +15,7 @@ CREATE TABLE `Case_Editrici` (
 -- libreria_db.Generi definition
 
 CREATE TABLE `Generi` (
-  `id_genere` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),1)),
+  `id_genere` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
   `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id_genere`),
   UNIQUE KEY `nome` (`nome`)
@@ -21,7 +25,7 @@ CREATE TABLE `Generi` (
 -- libreria_db.Nazionalita definition
 
 CREATE TABLE `Nazionalita` (
-  `id_nazionalita` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),1)),
+  `id_nazionalita` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
   `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id_nazionalita`),
   UNIQUE KEY `nome` (`nome`)
@@ -31,7 +35,7 @@ CREATE TABLE `Nazionalita` (
 -- libreria_db.Autori definition
 
 CREATE TABLE `Autori` (
-  `id_autore` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),1)),
+  `id_autore` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
   `nome` varchar(100) NOT NULL,
   `cognome` varchar(100) NOT NULL,
   `data_nascita` date DEFAULT NULL,
@@ -45,7 +49,7 @@ CREATE TABLE `Autori` (
 -- libreria_db.Libri definition
 
 CREATE TABLE `Libri` (
-  `id_libro` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),1)),
+  `id_libro` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
   `titolo` varchar(255) NOT NULL,
   `anno` int DEFAULT NULL,
   `id_genere` binary(16) DEFAULT NULL,
@@ -70,7 +74,7 @@ CREATE TABLE `Libri_Autori` (
 -- libreria_db.Magazzino definition
 
 CREATE TABLE `Magazzino` (
-  `id_copia` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),1)),
+  `id_copia` binary(16) NOT NULL DEFAULT (uuid_to_bin(uuid(),0)),
   `id_libro` binary(16) NOT NULL,
   `quantita` int NOT NULL DEFAULT '1',
   `id_casa_editrice` binary(16) DEFAULT NULL,
