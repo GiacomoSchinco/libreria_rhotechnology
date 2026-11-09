@@ -3,8 +3,10 @@ package com.rhotechnologylibri.libreria_rhotechnology.service;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.request.NazionalitaRequestDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.NazionalitaResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.Nazionalita;
+import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceInUseException;
 import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceNotFoundException;
 import com.rhotechnologylibri.libreria_rhotechnology.mapper.NazionalitaMapper;
+import com.rhotechnologylibri.libreria_rhotechnology.repository.AutoreRepository;
 import com.rhotechnologylibri.libreria_rhotechnology.repository.NazionalitaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +18,14 @@ public class NazionalitaService {
 
     private final NazionalitaRepository nazionalitaRepository;
     private final NazionalitaMapper nazionalitaMapper;
+    private final AutoreRepository autoreRepository;
 
     public NazionalitaService(NazionalitaRepository nazionalitaRepository,
-                              NazionalitaMapper nazionalitaMapper) {
+                              NazionalitaMapper nazionalitaMapper,
+                              AutoreRepository autoreRepository) {
         this.nazionalitaRepository = nazionalitaRepository;
         this.nazionalitaMapper = nazionalitaMapper;
+        this.autoreRepository = autoreRepository;
     }
 
     @Transactional(readOnly = true)
@@ -53,6 +58,9 @@ public class NazionalitaService {
     public void delete(Integer id) {
         if (!nazionalitaRepository.existsById(id)) {
             throw new ResourceNotFoundException("Nazionalita", id);
+        }
+        if (autoreRepository.existsByNazionalitaId(id)) {
+            throw new ResourceInUseException("Nazionalita", id, "almeno un autore");
         }
         nazionalitaRepository.deleteById(id);
     }

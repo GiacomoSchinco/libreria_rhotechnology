@@ -3,9 +3,11 @@ package com.rhotechnologylibri.libreria_rhotechnology.service;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.request.GenereRequestDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.GenereResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.Genere;
+import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceInUseException;
 import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceNotFoundException;
 import com.rhotechnologylibri.libreria_rhotechnology.mapper.GenereMapper;
 import com.rhotechnologylibri.libreria_rhotechnology.repository.GenereRepository;
+import com.rhotechnologylibri.libreria_rhotechnology.repository.LibroRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +18,14 @@ public class GenereService {
 
     private final GenereRepository genereRepository;
     private final GenereMapper genereMapper;
+    private final LibroRepository libroRepository;
 
     public GenereService(GenereRepository genereRepository,
-                         GenereMapper genereMapper) {
+                         GenereMapper genereMapper,
+                         LibroRepository libroRepository) {
         this.genereRepository = genereRepository;
         this.genereMapper = genereMapper;
+        this.libroRepository = libroRepository;
     }
 
     @Transactional(readOnly = true)
@@ -53,6 +58,9 @@ public class GenereService {
     public void delete(Integer id) {
         if (!genereRepository.existsById(id)) {
             throw new ResourceNotFoundException("Genere", id);
+        }
+        if (libroRepository.existsByGenereId(id)) {
+            throw new ResourceInUseException("Genere", id, "almeno un libro");
         }
         genereRepository.deleteById(id);
     }

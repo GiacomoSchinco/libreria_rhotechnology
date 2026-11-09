@@ -3,9 +3,11 @@ package com.rhotechnologylibri.libreria_rhotechnology.service;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.request.CasaEditriceRequestDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.CasaEditriceResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.CasaEditrice;
+import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceInUseException;
 import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceNotFoundException;
 import com.rhotechnologylibri.libreria_rhotechnology.mapper.CasaEditriceMapper;
 import com.rhotechnologylibri.libreria_rhotechnology.repository.CasaEditriceRepository;
+import com.rhotechnologylibri.libreria_rhotechnology.repository.MagazzinoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +18,14 @@ public class CasaEditriceService {
 
     private final CasaEditriceRepository casaEditriceRepository;
     private final CasaEditriceMapper casaEditriceMapper;
+    private final MagazzinoRepository magazzinoRepository;
 
     public CasaEditriceService(CasaEditriceRepository casaEditriceRepository,
-                               CasaEditriceMapper casaEditriceMapper) {
+                               CasaEditriceMapper casaEditriceMapper,
+                               MagazzinoRepository magazzinoRepository) {
         this.casaEditriceRepository = casaEditriceRepository;
         this.casaEditriceMapper = casaEditriceMapper;
+        this.magazzinoRepository = magazzinoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -53,6 +58,9 @@ public class CasaEditriceService {
     public void delete(Integer id) {
         if (!casaEditriceRepository.existsById(id)) {
             throw new ResourceNotFoundException("CasaEditrice", id);
+        }
+        if (magazzinoRepository.existsByCasaEditriceId(id)) {
+            throw new ResourceInUseException("CasaEditrice", id, "almeno una riga di magazzino");
         }
         casaEditriceRepository.deleteById(id);
     }
