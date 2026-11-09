@@ -28,10 +28,6 @@ public class Magazzino {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Libro getLibro() {
         return libro;
     }
