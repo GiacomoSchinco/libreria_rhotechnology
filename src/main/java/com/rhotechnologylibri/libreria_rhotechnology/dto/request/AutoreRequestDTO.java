@@ -6,16 +6,16 @@ public class AutoreRequestDTO {
 
     private String nome;
     private String cognome;
-    private LocalDate data;
+    private LocalDate dataNascita;
     private Integer idNazionalita;
 
     public AutoreRequestDTO() {
     }
 
-    public AutoreRequestDTO(String nome, String cognome, LocalDate data, Integer idNazionalita) {
+    public AutoreRequestDTO(String nome, String cognome, LocalDate dataNascita, Integer idNazionalita) {
         this.nome = nome;
         this.cognome = cognome;
-        this.data = data;
+        this.dataNascita = dataNascita;
         this.idNazionalita = idNazionalita;
     }
 
@@ -35,12 +35,12 @@ public class AutoreRequestDTO {
         this.cognome = cognome;
     }
 
-    public LocalDate getData() {
-        return data;
+    public LocalDate getDataNascita() {
+        return dataNascita;
     }
 
-    public void setData(LocalDate data) {
-        this.data = data;
+    public void setDataNascita(LocalDate dataNascita) {
+        this.dataNascita = dataNascita;
     }
 
     public Integer getIdNazionalita() {

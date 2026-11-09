@@ -7,17 +7,17 @@ public class AutoreResponseDTO {
     private Integer id;
     private String nome;
     private String cognome;
-    private LocalDate data;
+    private LocalDate dataNascita;
     private NazionalitaResponseDTO nazionalita;
 
     public AutoreResponseDTO() {
     }
 
-    public AutoreResponseDTO(Integer id, String nome, String cognome, LocalDate data) {
+    public AutoreResponseDTO(Integer id, String nome, String cognome, LocalDate dataNascita) {
         this.id = id;
         this.nome = nome;
         this.cognome = cognome;
-        this.data = data;
+        this.dataNascita = dataNascita;
     }
 
     public Integer getId() {
@@ -44,12 +44,12 @@ public class AutoreResponseDTO {
         this.cognome = cognome;
     }
 
-    public LocalDate getData() {
-        return data;
+    public LocalDate getDataNascita() {
+        return dataNascita;
     }
 
-    public void setData(LocalDate data) {
-        this.data = data;
+    public void setDataNascita(LocalDate dataNascita) {
+        this.dataNascita = dataNascita;
     }
 
     public NazionalitaResponseDTO getNazionalita() {
