@@ -2,6 +2,7 @@ package com.rhotechnologylibri.libreria_rhotechnology.controller;
 
 import com.rhotechnologylibri.libreria_rhotechnology.dto.request.GenereRequestDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.GenereResponseDTO;
+import com.rhotechnologylibri.libreria_rhotechnology.dto.response.LibroResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.service.GenereService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,11 @@ public class GenereController {
         return genereService.findById(id);
     }
 
+    @GetMapping("/{id}/libri")
+    public List<LibroResponseDTO> getLibriByGenere(@PathVariable Integer id) {
+        return genereService.getLibriByGenere(id);
+    }
+
     @PostMapping
     public ResponseEntity<GenereResponseDTO> create(@Valid @RequestBody GenereRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(genereService.create(request));
@@ -45,7 +51,7 @@ public class GenereController {
 
     @PutMapping("/{id}")
     public GenereResponseDTO update(@PathVariable Integer id,
-                                    @Valid @RequestBody GenereRequestDTO request) {
+            @Valid @RequestBody GenereRequestDTO request) {
         return genereService.update(id, request);
     }
 
