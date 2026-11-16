@@ -1,6 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <h1> Welcome to Spring Security world!</h1>
+<p>Utente: <span th:text="${#authentication.name}">anonymous</span></p>
 <form th:action="@{/logout}" method="post">
     <button type="submit">Logout</button>
 </form>

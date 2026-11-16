@@ -28,8 +28,7 @@ public class SpringSecurityConfig {
                             "/swagger-ui.html",
                             "/swagger-ui/**",
                             "/v3/api-docs",
-                            "/v3/api-docs/**"
-                    ).permitAll();
+                            "/v3/api-docs/**").permitAll();
                     authorize.anyRequest().authenticated();
                 }).formLogin(Customizer.withDefaults());
         return http.build();
@@ -40,7 +39,7 @@ public class SpringSecurityConfig {
 
         UserDetails ramesh = User.builder()
                 .username("ramesh")
-                .password(passwordEncoder().encode("password"))
+                .password(passwordEncoder().encode("test"))
                 .roles("USER")
                 .build();
 
