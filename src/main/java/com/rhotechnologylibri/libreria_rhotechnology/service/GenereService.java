@@ -4,6 +4,7 @@ import com.rhotechnologylibri.libreria_rhotechnology.dto.request.GenereRequestDT
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.GenereResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.LibroResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.Genere;
+import com.rhotechnologylibri.libreria_rhotechnology.exception.BadRequestException;
 import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceInUseException;
 import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceNotFoundException;
 import com.rhotechnologylibri.libreria_rhotechnology.mapper.GenereMapper;
@@ -43,6 +44,31 @@ public class GenereService {
         Genere entity = genereRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Genere", id));
         return genereMapper.toResponse(entity);
+    }
+
+    /**
+     * Risolve il genere di un libro: per id (deve esistere) oppure per nome, riusando
+     * quello gia presente o creandolo. Nessuno dei due = libro senza genere.
+     */
+    @Transactional
+    public Genere resolve(Integer idGenere, String nomeGenere) {
+        if (idGenere != null && nomeGenere != null) {
+            throw new BadRequestException("Indica idGenere oppure nomeGenere, non entrambi");
+        }
+        if (idGenere != null) {
+            return genereRepository.findById(idGenere)
+                    .orElseThrow(() -> new ResourceNotFoundException("Genere", idGenere));
+        }
+        if (nomeGenere == null) {
+            return null;
+        }
+
+        String nome = nomeGenere.trim();
+        if (nome.isEmpty()) {
+            throw new BadRequestException("nomeGenere non puo essere vuoto");
+        }
+        return genereRepository.findByNomeIgnoreCase(nome)
+                .orElseGet(() -> genereRepository.save(new Genere(nome)));
     }
 
     @Transactional
