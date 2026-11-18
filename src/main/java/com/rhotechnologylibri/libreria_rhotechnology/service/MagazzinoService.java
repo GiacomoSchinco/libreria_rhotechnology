@@ -11,10 +11,10 @@ import com.rhotechnologylibri.libreria_rhotechnology.mapper.MagazzinoMapper;
 import com.rhotechnologylibri.libreria_rhotechnology.repository.CasaEditriceRepository;
 import com.rhotechnologylibri.libreria_rhotechnology.repository.LibroRepository;
 import com.rhotechnologylibri.libreria_rhotechnology.repository.MagazzinoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class MagazzinoService {
@@ -35,8 +35,8 @@ public class MagazzinoService {
     }
 
     @Transactional(readOnly = true)
-    public List<MagazzinoResponseDTO> findAll() {
-        return magazzinoMapper.toResponseList(magazzinoRepository.findAll());
+    public Page<MagazzinoResponseDTO> findAll(Pageable pageable) {
+        return magazzinoRepository.findAll(pageable).map(magazzinoMapper::toResponse);
     }
 
     @Transactional(readOnly = true)

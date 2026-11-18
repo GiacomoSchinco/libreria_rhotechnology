@@ -2,8 +2,11 @@ package com.rhotechnologylibri.libreria_rhotechnology.controller;
 
 import com.rhotechnologylibri.libreria_rhotechnology.dto.request.AutoreRequestDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.AutoreResponseDTO;
+import com.rhotechnologylibri.libreria_rhotechnology.pagination.Paging;
 import com.rhotechnologylibri.libreria_rhotechnology.service.AutoreService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,10 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/autori")
@@ -29,8 +31,10 @@ public class AutoreController {
     }
 
     @GetMapping
-    public List<AutoreResponseDTO> findAll() {
-        return autoreService.findAll();
+    public Page<AutoreResponseDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return autoreService.findAll(Paging.of(page, size, Sort.by("cognome", "nome")));
     }
 
     @GetMapping("/{id}")

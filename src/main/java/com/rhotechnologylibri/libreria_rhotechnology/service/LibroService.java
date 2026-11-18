@@ -7,6 +7,8 @@ import com.rhotechnologylibri.libreria_rhotechnology.entity.Libro;
 import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceNotFoundException;
 import com.rhotechnologylibri.libreria_rhotechnology.mapper.LibroMapper;
 import com.rhotechnologylibri.libreria_rhotechnology.repository.LibroRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +34,8 @@ public class LibroService {
     }
 
     @Transactional(readOnly = true)
-    public List<LibroResponseDTO> findAll() {
-        return libroMapper.toResponseList(libroRepository.findAll());
+    public Page<LibroResponseDTO> findAll(Pageable pageable) {
+        return libroRepository.findAll(pageable).map(libroMapper::toResponse);
     }
 
     @Transactional(readOnly = true)
