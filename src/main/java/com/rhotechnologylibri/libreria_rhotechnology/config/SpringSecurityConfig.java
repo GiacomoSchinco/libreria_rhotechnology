@@ -1,5 +1,6 @@
 package com.rhotechnologylibri.libreria_rhotechnology.config;
 
+import com.rhotechnologylibri.libreria_rhotechnology.security.JwtAuthenticationEntryPoint;
 import com.rhotechnologylibri.libreria_rhotechnology.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,9 +25,12 @@ import java.util.List;
 public class SpringSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    public SpringSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SpringSecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                                JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
 
     @Bean
@@ -50,6 +54,7 @@ public class SpringSecurityConfig {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 "/auth/**",
