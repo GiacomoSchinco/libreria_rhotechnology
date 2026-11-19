@@ -83,3 +83,15 @@ CREATE TABLE `magazzino` (
   CONSTRAINT `fk_magazzino_libro` FOREIGN KEY (`id_libro`) REFERENCES `libri` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_magazzino_casa_editrice` FOREIGN KEY (`id_casa_editrice`) REFERENCES `case_editrici` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- libreria_db.users definition
+-- password contiene l'hash BCrypt generato da BCryptPasswordEncoder
+
+CREATE TABLE `users` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
