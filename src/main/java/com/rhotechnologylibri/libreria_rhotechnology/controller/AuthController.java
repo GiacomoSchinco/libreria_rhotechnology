@@ -19,6 +19,7 @@ import com.rhotechnologylibri.libreria_rhotechnology.exception.UnauthorizedExcep
 import com.rhotechnologylibri.libreria_rhotechnology.repository.UserRepository;
 import com.rhotechnologylibri.libreria_rhotechnology.security.JwtService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 
 @RestController
@@ -37,6 +38,8 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
+    // endpoint pubblici: niente token, quindi niente lucchetto e nessun header Authorization in Swagger
+    @SecurityRequirements
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody AuthRequestDTO request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -51,6 +54,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Utente registrato");
     }
 
+    @SecurityRequirements
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequestDTO request) {
         User found = userRepository.findByUsername(request.getUsername()).orElse(null);
