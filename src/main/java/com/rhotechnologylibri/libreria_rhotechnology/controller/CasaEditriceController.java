@@ -29,13 +29,13 @@ public class CasaEditriceController {
     }
 
     @GetMapping
-    public List<CasaEditriceResponseDTO> findAll() {
-        return casaEditriceService.findAll();
+    public ResponseEntity<List<CasaEditriceResponseDTO>> findAll() {
+        return ResponseEntity.ok(casaEditriceService.findAll());
     }
 
     @GetMapping("/{id}")
-    public CasaEditriceResponseDTO findById(@PathVariable Integer id) {
-        return casaEditriceService.findById(id);
+    public ResponseEntity<CasaEditriceResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(casaEditriceService.findById(id));
     }
 
     @PostMapping
@@ -44,9 +44,9 @@ public class CasaEditriceController {
     }
 
     @PutMapping("/{id}")
-    public CasaEditriceResponseDTO update(@PathVariable Integer id,
-                                          @Valid @RequestBody CasaEditriceRequestDTO request) {
-        return casaEditriceService.update(id, request);
+    public ResponseEntity<CasaEditriceResponseDTO> update(@PathVariable Integer id,
+                                                          @Valid @RequestBody CasaEditriceRequestDTO request) {
+        return ResponseEntity.ok(casaEditriceService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

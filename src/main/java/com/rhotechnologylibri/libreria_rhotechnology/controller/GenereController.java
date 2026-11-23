@@ -30,18 +30,18 @@ public class GenereController {
     }
 
     @GetMapping
-    public List<GenereResponseDTO> findAll() {
-        return genereService.findAll();
+    public ResponseEntity<List<GenereResponseDTO>> findAll() {
+        return ResponseEntity.ok(genereService.findAll());
     }
 
     @GetMapping("/{id}")
-    public GenereResponseDTO findById(@PathVariable Integer id) {
-        return genereService.findById(id);
+    public ResponseEntity<GenereResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(genereService.findById(id));
     }
 
     @GetMapping("/{id}/libri")
-    public List<LibroResponseDTO> getLibriByGenere(@PathVariable Integer id) {
-        return genereService.getLibriByGenere(id);
+    public ResponseEntity<List<LibroResponseDTO>> getLibriByGenere(@PathVariable Integer id) {
+        return ResponseEntity.ok(genereService.getLibriByGenere(id));
     }
 
     @PostMapping
@@ -50,9 +50,9 @@ public class GenereController {
     }
 
     @PutMapping("/{id}")
-    public GenereResponseDTO update(@PathVariable Integer id,
+    public ResponseEntity<GenereResponseDTO> update(@PathVariable Integer id,
             @Valid @RequestBody GenereRequestDTO request) {
-        return genereService.update(id, request);
+        return ResponseEntity.ok(genereService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

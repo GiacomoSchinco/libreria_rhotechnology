@@ -31,15 +31,15 @@ public class MagazzinoController {
     }
 
     @GetMapping
-    public Page<MagazzinoResponseDTO> findAll(
+    public ResponseEntity<Page<MagazzinoResponseDTO>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return magazzinoService.findAll(Paging.of(page, size, Sort.by("id")));
+        return ResponseEntity.ok(magazzinoService.findAll(Paging.of(page, size, Sort.by("id"))));
     }
 
     @GetMapping("/{id}")
-    public MagazzinoResponseDTO findById(@PathVariable Integer id) {
-        return magazzinoService.findById(id);
+    public ResponseEntity<MagazzinoResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(magazzinoService.findById(id));
     }
 
     @PostMapping
@@ -48,9 +48,9 @@ public class MagazzinoController {
     }
 
     @PutMapping("/{id}")
-    public MagazzinoResponseDTO update(@PathVariable Integer id,
-                                       @Valid @RequestBody MagazzinoRequestDTO request) {
-        return magazzinoService.update(id, request);
+    public ResponseEntity<MagazzinoResponseDTO> update(@PathVariable Integer id,
+                                                       @Valid @RequestBody MagazzinoRequestDTO request) {
+        return ResponseEntity.ok(magazzinoService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

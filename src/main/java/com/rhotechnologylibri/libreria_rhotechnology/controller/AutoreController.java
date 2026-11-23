@@ -31,15 +31,15 @@ public class AutoreController {
     }
 
     @GetMapping
-    public Page<AutoreResponseDTO> findAll(
+    public ResponseEntity<Page<AutoreResponseDTO>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return autoreService.findAll(Paging.of(page, size, Sort.by("cognome", "nome")));
+        return ResponseEntity.ok(autoreService.findAll(Paging.of(page, size, Sort.by("cognome", "nome"))));
     }
 
     @GetMapping("/{id}")
-    public AutoreResponseDTO findById(@PathVariable Integer id) {
-        return autoreService.findById(id);
+    public ResponseEntity<AutoreResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(autoreService.findById(id));
     }
 
     @PostMapping
@@ -48,9 +48,9 @@ public class AutoreController {
     }
 
     @PutMapping("/{id}")
-    public AutoreResponseDTO update(@PathVariable Integer id,
-                                    @Valid @RequestBody AutoreRequestDTO request) {
-        return autoreService.update(id, request);
+    public ResponseEntity<AutoreResponseDTO> update(@PathVariable Integer id,
+                                                    @Valid @RequestBody AutoreRequestDTO request) {
+        return ResponseEntity.ok(autoreService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

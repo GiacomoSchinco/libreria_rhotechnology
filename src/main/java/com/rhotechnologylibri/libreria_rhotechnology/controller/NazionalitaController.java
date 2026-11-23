@@ -29,13 +29,13 @@ public class NazionalitaController {
     }
 
     @GetMapping
-    public List<NazionalitaResponseDTO> findAll() {
-        return nazionalitaService.findAll();
+    public ResponseEntity<List<NazionalitaResponseDTO>> findAll() {
+        return ResponseEntity.ok(nazionalitaService.findAll());
     }
 
     @GetMapping("/{id}")
-    public NazionalitaResponseDTO findById(@PathVariable Integer id) {
-        return nazionalitaService.findById(id);
+    public ResponseEntity<NazionalitaResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(nazionalitaService.findById(id));
     }
 
     @PostMapping
@@ -44,9 +44,9 @@ public class NazionalitaController {
     }
 
     @PutMapping("/{id}")
-    public NazionalitaResponseDTO update(@PathVariable Integer id,
-                                        @Valid @RequestBody NazionalitaRequestDTO request) {
-        return nazionalitaService.update(id, request);
+    public ResponseEntity<NazionalitaResponseDTO> update(@PathVariable Integer id,
+                                                         @Valid @RequestBody NazionalitaRequestDTO request) {
+        return ResponseEntity.ok(nazionalitaService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

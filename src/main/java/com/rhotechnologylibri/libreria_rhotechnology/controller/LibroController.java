@@ -31,15 +31,15 @@ public class LibroController {
     }
 
     @GetMapping
-    public Page<LibroResponseDTO> findAll(
+    public ResponseEntity<Page<LibroResponseDTO>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return libroService.findAll(Paging.of(page, size, Sort.by("titolo")));
+        return ResponseEntity.ok(libroService.findAll(Paging.of(page, size, Sort.by("titolo"))));
     }
 
     @GetMapping("/{id}")
-    public LibroResponseDTO findById(@PathVariable Integer id) {
-        return libroService.findById(id);
+    public ResponseEntity<LibroResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(libroService.findById(id));
     }
 
     @PostMapping
@@ -48,9 +48,9 @@ public class LibroController {
     }
 
     @PutMapping("/{id}")
-    public LibroResponseDTO update(@PathVariable Integer id,
-                                   @Valid @RequestBody LibroRequestDTO request) {
-        return libroService.update(id, request);
+    public ResponseEntity<LibroResponseDTO> update(@PathVariable Integer id,
+                                                   @Valid @RequestBody LibroRequestDTO request) {
+        return ResponseEntity.ok(libroService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

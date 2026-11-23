@@ -69,10 +69,10 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public Map<String, String> me(Authentication authentication) {
+    public ResponseEntity<Map<String, String>> me(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new UnauthorizedException("Autenticazione richiesta: token mancante o non valido");
         }
-        return Map.of("username", authentication.getName());
+        return ResponseEntity.ok(Map.of("username", authentication.getName()));
     }
 }
