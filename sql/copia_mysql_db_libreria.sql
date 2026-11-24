@@ -78,6 +78,7 @@ CREATE TABLE `magazzino` (
   `quantita` int NOT NULL DEFAULT '1',
   `id_casa_editrice` int DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_magazzino_libro_casa` (`id_libro`,`id_casa_editrice`),
   KEY `idx_magazzino_libro` (`id_libro`),
   KEY `idx_magazzino_casa_editrice` (`id_casa_editrice`),
   CONSTRAINT `fk_magazzino_libro` FOREIGN KEY (`id_libro`) REFERENCES `libri` (`id`) ON DELETE CASCADE,

@@ -16,6 +16,9 @@ public interface LibroRepository extends JpaRepository<Libro, Integer> {
     @EntityGraph(attributePaths = "genere")
     Page<Libro> findAll(Pageable pageable);
 
+    // Ricerca: nessun @EntityGraph, il DTO di sintesi usa solo id e titolo
+    List<Libro> findByTitoloContainingIgnoreCaseOrderByTitoloAsc(String titolo);
+
     boolean existsByGenereId(Integer idGenere);
 
     List<Libro> findByGenereId(Integer idGenere);

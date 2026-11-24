@@ -16,8 +16,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class MagazzinoService {
+
+    private static final int QUANTITA_DEFAULT = 1;
 
     private final MagazzinoRepository magazzinoRepository;
     private final MagazzinoMapper magazzinoMapper;
@@ -46,21 +50,50 @@ public class MagazzinoService {
         return magazzinoMapper.toResponse(entity);
     }
 
+    // Se libro + casa editrice esistono gia', non crea una seconda riga: somma la quantita' a quella presente
     @Transactional
-    public MagazzinoResponseDTO create(MagazzinoRequestDTO request) {
+    public EsitoSalvataggio create(MagazzinoRequestDTO request) {
+        Libro libro = resolveLibro(request.getIdLibro());
+        CasaEditrice casaEditrice = resolveCasaEditrice(request.getIdCasaEditrice());
+
+        Optional<Magazzino> esistente = findEsistente(libro.getId(), casaEditrice);
+        if (esistente.isPresent()) {
+            Magazzino riga = esistente.get();
+            riga.setQuantita(riga.getQuantita() + quantitaRichiesta(request));
+            return new EsitoSalvataggio(magazzinoMapper.toResponse(magazzinoRepository.save(riga)), false);
+        }
+
         Magazzino entity = magazzinoMapper.toEntity(request);
-        entity.setLibro(resolveLibro(request.getIdLibro()));
-        entity.setCasaEditrice(resolveCasaEditrice(request.getIdCasaEditrice()));
-        return magazzinoMapper.toResponse(magazzinoRepository.save(entity));
+        entity.setLibro(libro);
+        entity.setCasaEditrice(casaEditrice);
+        return new EsitoSalvataggio(magazzinoMapper.toResponse(magazzinoRepository.save(entity)), true);
     }
 
     @Transactional
     public MagazzinoResponseDTO update(Integer id, MagazzinoRequestDTO request) {
         Magazzino entity = magazzinoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Magazzino", id));
+        Libro libro = resolveLibro(request.getIdLibro());
+        CasaEditrice casaEditrice = resolveCasaEditrice(request.getIdCasaEditrice());
+
+        // Se la modifica punta a libro + casa editrice gia' presenti su un'altra riga,
+        // la riga duplicata viene assorbita invece di creare un doppione
+        Optional<Magazzino> duplicata = findEsistente(libro.getId(), casaEditrice)
+                .filter(altra -> !altra.getId().equals(id));
+
+        int quantitaAssorbita = 0;
+        if (duplicata.isPresent()) {
+            quantitaAssorbita = duplicata.get().getQuantita();
+            // Il DELETE va eseguito prima di spostare libro/casa editrice su entity,
+            // altrimenti l'UPDATE violerebbe il vincolo UNIQUE
+            magazzinoRepository.delete(duplicata.get());
+            magazzinoRepository.flush();
+        }
+
         magazzinoMapper.updateEntity(entity, request);
-        entity.setLibro(resolveLibro(request.getIdLibro()));
-        entity.setCasaEditrice(resolveCasaEditrice(request.getIdCasaEditrice()));
+        entity.setLibro(libro);
+        entity.setCasaEditrice(casaEditrice);
+        entity.setQuantita(entity.getQuantita() + quantitaAssorbita);
         return magazzinoMapper.toResponse(magazzinoRepository.save(entity));
     }
 
@@ -70,6 +103,19 @@ public class MagazzinoService {
             throw new ResourceNotFoundException("Magazzino", id);
         }
         magazzinoRepository.deleteById(id);
+    }
+
+    // Cerca la riga con lo stesso libro e la stessa casa editrice (null incluso)
+    private Optional<Magazzino> findEsistente(Integer idLibro, CasaEditrice casaEditrice) {
+        if (casaEditrice == null) {
+            return magazzinoRepository.findFirstByLibroIdAndCasaEditriceIsNull(idLibro);
+        }
+        return magazzinoRepository.findFirstByLibroIdAndCasaEditriceId(idLibro, casaEditrice.getId());
+    }
+
+    // quantita' assente nel DTO = un pezzo, coerente con il default dell'entity
+    private int quantitaRichiesta(MagazzinoRequestDTO request) {
+        return request.getQuantita() != null ? request.getQuantita() : QUANTITA_DEFAULT;
     }
 
     // Libro obbligatorio: la riga di magazzino non esiste senza libro
@@ -88,5 +134,9 @@ public class MagazzinoService {
         }
         return casaEditriceRepository.findById(idCasaEditrice)
                 .orElseThrow(() -> new ResourceNotFoundException("CasaEditrice", idCasaEditrice));
+    }
+
+    // creato = true quando nasce una nuova riga (201), false quando si unisce a una esistente (200)
+    public record EsitoSalvataggio(MagazzinoResponseDTO magazzino, boolean creato) {
     }
 }

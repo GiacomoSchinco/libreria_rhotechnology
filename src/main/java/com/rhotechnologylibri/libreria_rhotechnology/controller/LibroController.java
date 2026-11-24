@@ -2,8 +2,10 @@ package com.rhotechnologylibri.libreria_rhotechnology.controller;
 
 import com.rhotechnologylibri.libreria_rhotechnology.dto.request.LibroRequestDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.LibroResponseDTO;
+import com.rhotechnologylibri.libreria_rhotechnology.dto.response.LibroSintesiResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.pagination.Paging;
 import com.rhotechnologylibri.libreria_rhotechnology.service.LibroService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/libri")
@@ -40,6 +44,13 @@ public class LibroController {
     @GetMapping("/{id}")
     public ResponseEntity<LibroResponseDTO> findById(@PathVariable Integer id) {
         return ResponseEntity.ok(libroService.findById(id));
+    }
+
+    @GetMapping("/ricerca")
+    public ResponseEntity<List<LibroSintesiResponseDTO>> searchByTitolo(
+            @Parameter(description = "Parte del titolo (minimo 3 caratteri)")
+            @RequestParam String titolo) {
+        return ResponseEntity.ok(libroService.searchByTitolo(titolo));
     }
 
     @PostMapping

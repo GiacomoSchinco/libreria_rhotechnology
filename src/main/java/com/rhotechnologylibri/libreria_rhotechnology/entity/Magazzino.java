@@ -3,7 +3,9 @@ package com.rhotechnologylibri.libreria_rhotechnology.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "magazzino")
+@Table(name = "magazzino", uniqueConstraints = @UniqueConstraint(
+        name = "uk_magazzino_libro_casa",
+        columnNames = { "id_libro", "id_casa_editrice" }))
 public class Magazzino {
 
     @Id

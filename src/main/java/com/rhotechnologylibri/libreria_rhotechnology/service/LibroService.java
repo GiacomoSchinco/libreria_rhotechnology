@@ -2,8 +2,10 @@ package com.rhotechnologylibri.libreria_rhotechnology.service;
 
 import com.rhotechnologylibri.libreria_rhotechnology.dto.request.LibroRequestDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.LibroResponseDTO;
+import com.rhotechnologylibri.libreria_rhotechnology.dto.response.LibroSintesiResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.Autore;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.Libro;
+import com.rhotechnologylibri.libreria_rhotechnology.exception.BadRequestException;
 import com.rhotechnologylibri.libreria_rhotechnology.exception.ResourceNotFoundException;
 import com.rhotechnologylibri.libreria_rhotechnology.mapper.LibroMapper;
 import com.rhotechnologylibri.libreria_rhotechnology.repository.LibroRepository;
@@ -17,6 +19,8 @@ import java.util.List;
 
 @Service
 public class LibroService {
+
+    private static final int MIN_LUNGHEZZA_RICERCA = 3;
 
     private final LibroRepository libroRepository;
     private final LibroMapper libroMapper;
@@ -43,6 +47,18 @@ public class LibroService {
         Libro entity = libroRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Libro", id));
         return libroMapper.toResponse(entity);
+    }
+
+    // Ricerca per autocomplete sul titolo: basta una parte del titolo, minimo 3 caratteri, non paginata
+    @Transactional(readOnly = true)
+    public List<LibroSintesiResponseDTO> searchByTitolo(String titolo) {
+        String query = titolo == null ? "" : titolo.trim();
+        if (query.length() < MIN_LUNGHEZZA_RICERCA) {
+            throw new BadRequestException(
+                    "inserisci almeno " + MIN_LUNGHEZZA_RICERCA + " caratteri per la ricerca");
+        }
+        return libroMapper.toSintesiList(
+                libroRepository.findByTitoloContainingIgnoreCaseOrderByTitoloAsc(query));
     }
 
     @Transactional

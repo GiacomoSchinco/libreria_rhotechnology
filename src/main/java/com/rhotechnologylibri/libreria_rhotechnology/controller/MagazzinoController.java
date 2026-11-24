@@ -44,7 +44,12 @@ public class MagazzinoController {
 
     @PostMapping
     public ResponseEntity<MagazzinoResponseDTO> create(@Valid @RequestBody MagazzinoRequestDTO request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(magazzinoService.create(request));
+        MagazzinoService.EsitoSalvataggio esito = magazzinoService.create(request);
+        if (esito.creato()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(esito.magazzino());
+        }
+        // riga gia' esistente: quantita' sommata, nessuna nuova risorsa creata
+        return ResponseEntity.ok(esito.magazzino());
     }
 
     @PutMapping("/{id}")

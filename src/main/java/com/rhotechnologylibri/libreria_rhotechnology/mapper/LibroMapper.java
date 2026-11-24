@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.rhotechnologylibri.libreria_rhotechnology.dto.request.LibroRequestDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.dto.response.LibroResponseDTO;
+import com.rhotechnologylibri.libreria_rhotechnology.dto.response.LibroSintesiResponseDTO;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.Autore;
 import com.rhotechnologylibri.libreria_rhotechnology.entity.Libro;
 
@@ -46,6 +47,23 @@ public class LibroMapper {
         }
         return entities.stream()
                 .map(this::toResponse)
+                .toList();
+    }
+
+    // Versione ridotta usata dalla ricerca: solo id e titolo, senza genere ne autori
+    public LibroSintesiResponseDTO toSintesi(Libro entity) {
+        if (entity == null) {
+            return null;
+        }
+        return new LibroSintesiResponseDTO(entity.getId(), entity.getTitolo());
+    }
+
+    public List<LibroSintesiResponseDTO> toSintesiList(List<Libro> entities) {
+        if (entities == null) {
+            return List.of();
+        }
+        return entities.stream()
+                .map(this::toSintesi)
                 .toList();
     }
 

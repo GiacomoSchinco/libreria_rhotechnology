@@ -164,6 +164,7 @@ CREATE TABLE magazzino (
   id_libro         INT NOT NULL,
   quantita         INT NOT NULL DEFAULT 1,
   id_casa_editrice INT NULL,
+  UNIQUE KEY uk_magazzino_libro_casa (id_libro, id_casa_editrice),
   CONSTRAINT fk_mag_libro FOREIGN KEY (id_libro) REFERENCES libri(id),
   CONSTRAINT fk_mag_casa  FOREIGN KEY (id_casa_editrice) REFERENCES case_editrici(id)
 );
@@ -258,6 +259,7 @@ Tutti gli endpoint tranne `/auth/login`, `/auth/register` e Swagger richiedono i
 | GET | `/auth/me` | — | 200 `{"username": "..."}` | utile per testare il token |
 | GET | `/api/libri?page=0&size=10` | — | 200 `Page<LibroResponseDTO>` | ordinato per `titolo` |
 | GET | `/api/libri/{id}` | — | 200 `LibroResponseDTO` | 404 se non esiste |
+| GET | `/api/libri/ricerca?titolo=...` | — | 200 `List<LibroSintesiResponseDTO>` | autocomplete: **minimo 3 caratteri** (altrimenti 400); `contains` case-insensitive, ordine per titolo; solo `id` e `titolo` |
 | POST | `/api/libri` | `LibroRequestDTO` | 201 `LibroResponseDTO` | |
 | PUT | `/api/libri/{id}` | `LibroRequestDTO` | 200 `LibroResponseDTO` | |
 | DELETE | `/api/libri/{id}` | — | 204 | |
@@ -271,7 +273,7 @@ Tutti gli endpoint tranne `/auth/login`, `/auth/register` e Swagger richiedono i
 | GET | `/api/case-editrici` | — | 200 `List<...>` | |
 | GET | `/api/nazionalita` | — | 200 `List<...>` | |
 | GET | `/api/magazzino?page=0&size=10` | — | 200 `Page<MagazzinoResponseDTO>` | ordinato per `id` |
-| POST/PUT/DELETE | `/api/magazzino[/{id}]` | `MagazzinoRequestDTO` | 201 / 200 / 204 | |
+| POST/PUT/DELETE | `/api/magazzino[/{id}]` | `MagazzinoRequestDTO` | 201 / 200 / 204 | POST: se esiste gia' una riga con lo stesso `idLibro` + casa editrice la quantita' viene **sommata** e risponde 200 (nessun duplicato). PUT: se la modifica punta a una coppia gia' presente, la riga duplicata viene assorbita e le quantita' sommate |
 
 ### Esempio: creare un libro con genere e autori "al volo"
 
@@ -438,6 +440,13 @@ Due scopi:
 
 L'ordinamento è deciso **nel controller** (`Sort.by("titolo")`, `Sort.by("cognome", "nome")`), non
 lasciato in mano al client: nessun `?sort=` arbitrario su campi interni.
+
+> **Attenzione alle liste non paginate**: `repository.findAll()` senza `Sort` genera una `SELECT` **senza
+> `ORDER BY`**. SQL non garantisce alcun ordine, e MySQL/InnoDB può restituire le righe seguendo un
+> indice secondario (es. l'indice `UNIQUE` su `nome`, che contiene anche l'id) invece della primary key:
+> per questo `GET /api/generi` e `GET /api/nazionalita` arrivavano ordinate per nome, non per id. Per
+> avere un ordine stabile la soluzione è dichiararlo esplicitamente: `findAll(Sort.by("id"))` (o
+> `Sort.by("nome")` se l'ordine alfabetico è quello desiderato).
 
 ### 6.7 Eccezioni custom + `@RestControllerAdvice`
 
